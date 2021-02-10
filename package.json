@@ -1,0 +1,27 @@
+{
+  "name": "svg-path-parser",
+  "version": "0.0.1",
+  "description": "Faster SVG path parser for Javascript",
+  "main": "index.js",
+  "scripts": {
+    "build": "node-gyp configure && node-gyp build",
+    "test": "jest"
+  },
+  "keywords": [
+    "svg",
+    "path",
+    "parser"
+  ],
+  "author": "Álvaro Mondéjar Rubio",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "node-addon-api": "*"
+  },
+  "devDependencies": {
+    "jest": "26.6.3",
+    "node-gyp": "^7.1.2",
+    "simple-icons": "^4.10.0",
+    "svgpath": "2.3.0"
+  },
+  "gypfile": true
+}
