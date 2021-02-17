@@ -7,7 +7,7 @@
         "<!(node -p \"require('node-addon-api').include_dir\")"
       ],
       "cflags!": [ "-fno-exceptions" ],
-      "cflags_cc!": [ "-fno-exceptions", "-fno-rtti" ],
+      "cflags_cc!": [ "-fno-exceptions", ],
       'defines': [ 'NAPI_DISABLE_CPP_EXCEPTIONS' ]
     }
   ]

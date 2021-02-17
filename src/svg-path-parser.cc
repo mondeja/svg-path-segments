@@ -1,8 +1,4 @@
-#pragma GCC optimize("O1") 
-
-#include <iostream>
-#include <typeinfo>
-#include <chrono> 
+#pragma GCC optimize("O2") 
 
 // -----------------
 
@@ -124,10 +120,6 @@ bool isSpace(const unsigned int ch) {
   }
 }
 
-bool isDigit(const unsigned short ch) {
-  return (ch > 47 && ch < 58);  // 0..9
-}
-
 bool isParamStart(const unsigned short ch) {
   return (ch > 47 && ch < 58) ||  // 0..9
          (ch == 0x2E) ||          // .
@@ -143,33 +135,19 @@ struct Param {
   struct Param *next;
 };
 
-/**
- * Segments structure.
- **/
-struct Segment {
-  struct Param *_firstParam;  // pointer to first parameter
-  unsigned int _cmdIndex;     // index of command inside path
-  unsigned int start;
-  unsigned int end;
-  bool chained;
-  unsigned int chainStart;
-  unsigned int chainEnd;
-
-  struct Segment *next;
-};
-
 class SvgPathParser {
     unsigned int index = 0;
     unsigned int maxIndex = 0;
+    unsigned int segmentsCounter = 0;
+    napi_env env;
+    
     unsigned int _segmentStart;
-    struct Segment *_previousSegment;
-    struct Segment *_previousFirstNonChainedSegment;
+    unsigned int _previousFirstNonChainedSegmentIndex;
     struct Param *_firstParamInCurrentSegment;
     struct Param *_previousParamInCurrentSegment;
 
     const char *path;
-    
-    void _raiseError(string err);
+
     void skipSpaces();
     void scanSegment();
     void scanFlag();
@@ -179,34 +157,12 @@ class SvgPathParser {
     string err = "";
     struct Segment *_firstSegment = NULL;
 
-    void parse(string path);
-    void clean();
+    void parse(napi_env _env, string path);
 };
 
-/**
- * Clean parser state, all pointers to segments and their parameters.
- **/
-void SvgPathParser::clean() {
-  struct Segment *headSegment = _firstSegment,
-                 *nextSegment;
-  struct Param *headParam, *nextParam;
-  headSegment = _firstSegment;
-  while (headSegment) {
-    headParam = headSegment->_firstParam;
-    while (headParam) {
-      nextParam = headParam->next;
-      free(headParam);
-      headParam = nextParam;
-    }
-    
-    nextSegment = headSegment->next;
-    free(headSegment);
-    headSegment = nextSegment;
-  }
-}
-
-void SvgPathParser::parse(Napi::Env env, const string _path) {
-  segments = Napi::Array::New(env);
+void SvgPathParser::parse(napi_env _env, const string _path) {
+  segments = Napi::Array::New(_env);
+  env = _env;
   
   path = _path.c_str();
   maxIndex = _path.length();
@@ -217,12 +173,6 @@ void SvgPathParser::parse(Napi::Env env, const string _path) {
   }
 };
 
-void SvgPathParser::_raiseError(string _err) {
-  err = _err;
-  // increment index, so the parser stops scanning segments
-  index = maxIndex;
-}
-
 void SvgPathParser::scanFlag() {
   struct Param *param = (struct Param*) malloc(sizeof(struct Param));
   param->value = path[index] & 1;
@@ -232,23 +182,15 @@ void SvgPathParser::scanFlag() {
 }
 
 void SvgPathParser::scanParam() {
-  
-  /*
-  if (index >= maxIndex) {
-    return _raiseError(
-      "Missed parameter (at pos " + to_string(index) + ")"
-    );
-  }
-  */
-
   char ch = path[index];
-  
-  
+
   if (!isParamStart(ch)) {
-    return _raiseError(
+    err = (
       "Parameter should start with '0..9', '+', '-', '.' (at pos " +
       to_string(index) + ")"
     );
+    index = maxIndex;
+    return;
   }
   
   unsigned int startIndex = index;
@@ -259,14 +201,6 @@ void SvgPathParser::scanParam() {
   
   ch = path[index];
   
-  /*
-  if ((ch == 0x30) && (index < maxIndex - 1) && isDigit(int(path[index + 1])) ) {  // 00..9
-    return _raiseError(
-      "Numbers started with '0' such as '09' are illegal (at pos "
-      + to_string(index) + ")"
-    );
-  }
-  */
   
   bool _firstDotFound = false;
   
@@ -295,6 +229,7 @@ void SvgPathParser::scanParam() {
   }
 
   param->value = stod(paramString);
+  param->next = NULL;
   if (_firstParamInCurrentSegment == NULL) {
     _firstParamInCurrentSegment = param;
     _previousParamInCurrentSegment = param;
@@ -312,22 +247,21 @@ void SvgPathParser::skipSpaces() {
 
 void SvgPathParser::scanSegment() {
   unsigned short _paramsNeeded = commandToNumberOfParams(path[index]);
-  
   if (_paramsNeeded == 0) {  // Zz
     // save the segment Z
-    struct Segment *segment = (struct Segment*) malloc(sizeof(struct Segment));
-    segment->_cmdIndex = index;
-    segment->start = index;
-    segment->end = index;
-    segment->chained = false;
-    segment->next = NULL;
-    segment->_firstParam = NULL;
-    if (_firstSegment == NULL) {
-      _firstSegment = segment;
-    } else {
-      _previousSegment->next = segment;
-    }
-    _previousSegment = segment;
+    Napi::Object segment = Napi::Object::New(env);
+    
+    // segment start and end
+    segment.Set("start", index);
+    segment.Set("end", index);
+    
+    // segment parameter
+    Napi::Array params = Napi::Array::New(env);
+    params.Set(uint32_t(0), path[index] == 0x7A ? "z" : "Z");
+    segment.Set("params", params);
+    
+    segments.Set(segmentsCounter, segment);
+    segmentsCounter++;
     index++;
     return;
   }
@@ -357,10 +291,6 @@ void SvgPathParser::scanSegment() {
         scanParam();
       }
       
-      if (err != "") {
-        return;
-      }
-      
       _lastNotSpaceIndex = index;
       
       skipSpaces();
@@ -373,39 +303,43 @@ void SvgPathParser::scanSegment() {
       }
     }
     
-    // after parse segment parameters, save the segment    
-    struct Segment *segment = (struct Segment*) malloc(sizeof(struct Segment));
-    segment->_cmdIndex = _segmentStart;
+    // after parse segment parameters, save the segment
+    Napi::Object segment = Napi::Object::New(env);
     if (_subSegmentsCounter == 0) {
-      segment->start = _segmentStart;
-      _previousFirstNonChainedSegment = segment;
+      _previousFirstNonChainedSegmentIndex = segmentsCounter;
+      segment.Set("start", _segmentStart);
     } else {
-      segment->start = _subSegmentStart;
+      segment.Set("start", _subSegmentStart);
     }
-    segment->end = _lastNotSpaceIndex == 0 ? (index - 1) : (_lastNotSpaceIndex - 1);
-    segment->next = NULL;
-    segment->_firstParam = _firstParamInCurrentSegment;
-    if (_firstSegment == NULL) {
-      _firstSegment = segment;
-    } else {
-      _previousSegment->next = segment;
+    segment.Set(
+      "end",
+      _lastNotSpaceIndex == 0 ? (index - 1) : (_lastNotSpaceIndex - 1)
+    );
+    if (_subSegmentsCounter > 0) {
+      segment.Set("chainStart", _segmentStart);
     }
-    _previousSegment = segment;
     
-    _firstParamInCurrentSegment = NULL;
-    if (_previousParamInCurrentSegment) {
-      _previousParamInCurrentSegment->next = NULL;
-      _previousParamInCurrentSegment = NULL;
+    Napi::Array params = Napi::Array::New(env);
+    params.Set(uint32_t(0), cmdCodeToString(path[_segmentStart]));
+
+    struct Param *headParam = _firstParamInCurrentSegment,
+                 *nextParam;
+    unsigned short _paramsCounter = 1;
+    while (headParam) {
+      params.Set(uint32_t(_paramsCounter), headParam->value);
+      _paramsCounter++;
+
+      nextParam = headParam->next;
+      free(headParam);
+      headParam = nextParam;
     }
+    _firstParamInCurrentSegment = NULL;
+    
+    segment.Set("params", params);
+    segments.Set(segmentsCounter, segment);    
     
     _subSegmentsCounter++;
-    
-    if (_subSegmentsCounter > 1) {
-      _previousSegment->chained = true;
-      _previousSegment->chainStart = _segmentStart;
-    } else {
-      _previousSegment->chained = false;
-    }
+    segmentsCounter++;
     
     // after ',' param is mandatory (next is a chained segment)
     if (_commaFound) {
@@ -416,22 +350,15 @@ void SvgPathParser::scanSegment() {
     if (!isParamStart(path[index])) {
       break;
     }
-    
-    /*
-    if (index == maxIndex) {
-      break;
-    }
-    */
   }
   
-  // set chainEnd for all chained segments
-  if (_previousSegment->chained) {
-    unsigned int chainEnd = index - 1;
-    struct Segment *headSegment = _previousFirstNonChainedSegment->next;
-    while (headSegment) {
-      headSegment->chainEnd = chainEnd;
-      headSegment = headSegment->next;
-    }
+  // Set chain endings for 
+  unsigned int _nChainedSegments = segmentsCounter - (_previousFirstNonChainedSegmentIndex + 1);
+  for (unsigned int i=0; i<_nChainedSegments; i++) {
+    Napi::Object segment = segments.Get(
+      uint32_t(_previousFirstNonChainedSegmentIndex + 1 + i)
+    ).As<Napi::Object>();
+    segment.Set("chainEnd", index - 1);
   }
 }
 
@@ -439,68 +366,13 @@ Napi::Object pathParse(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   //auto start = high_resolution_clock::now(); 
   
-  SvgPathParser parser;
-  //cout << typeid(info[0].ToString()).name() << endl;
-  
-  string path = info[0].As<Napi::String>();
-
-  parser.parse(path);
-  //auto conversion_start = high_resolution_clock::now(); 
-  
-  // convert segments from C++ to JS
-  /*
-  Napi::Array segments = Napi::Array::New(env);
-  struct Segment *headSegment = parser._firstSegment;
-  unsigned int _segmentsCounter = 0;
-  while (headSegment) {
-    Napi::Object segment = Napi::Object::New(env);
-    
-    // segment start and end
-    segment.Set(Napi::String::New(env, "start"), headSegment->start);
-    segment.Set(Napi::String::New(env, "end"), headSegment->end);
-    
-    // is a chained segment?
-    //segment.Set(Napi::String::New(env, "chained"), headSegment->chained);
-    if (headSegment->chained) {
-      // chain start and end
-      segment.Set(Napi::String::New(env, "chainStart"), headSegment->chainStart);
-      segment.Set(Napi::String::New(env, "chainEnd"), headSegment->chainEnd);
-    }
-
-    // add parameters
-    Napi::Array params = Napi::Array::New(env);
-    params.Set(uint32_t(0), cmdCodeToString(path[headSegment->_cmdIndex]));
-    struct Param *headParam = headSegment->_firstParam;
-    unsigned int _paramsCounter = 1;
-    while (headParam) {
-      params.Set(uint32_t(_paramsCounter), headParam->value);
-      headParam = headParam->next;
-      _paramsCounter++;
-    }
-    
-    // free iteration pointer
-    free(headParam);
-
-    segment.Set(Napi::String::New(env, "params"), params);
-
-    // add segment to segments array
-    segments.Set(uint32_t(_segmentsCounter), segment);
-
-    headSegment = headSegment->next;
-    _segmentsCounter++;
-  }
-  
-  // free iteration pointer
-  free(headSegment);
-  */
-
-  // free parser state
-  parser.clean();
+  SvgPathParser parser;  
+  parser.parse(env, info[0].As<Napi::String>());
   
   // build response
   Napi::Object response = Napi::Object::New(env);
   //   set segments
-  //response.Set(Napi::String::New(env, "segments"), segments);
+  response.Set(Napi::String::New(env, "segments"), parser.segments);
 
   //   set error
   Napi::String errString = Napi::String::New(env, "err");
