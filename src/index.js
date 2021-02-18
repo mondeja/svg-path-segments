@@ -184,7 +184,7 @@ const svgPathParse = function (d) {
       if (_currStartIndex !== undefined) {
         scanSegment(
           d, _previousNeedParams,
-          (_previousCode < 0x5B),  // is uppercase
+          _previousCode < 0x5B,  // is uppercase
           _currStartIndex,
           i - 1,
           segments
@@ -199,7 +199,7 @@ const svgPathParse = function (d) {
   scanSegment(
     d,
     _previousNeedParams,
-    (_previousCode < 0x5B),
+    _previousCode < 0x5B,
     _currStartIndex,
     d.length - 1,
     segments
