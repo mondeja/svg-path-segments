@@ -21,8 +21,8 @@ npm install svg-path-segments
 ```js
 const parsePath = require("svg-path-segments");
 
-const result = parsePath("M5 6 7 8l3 4z");
-console.log(JSON.stringify(result, null, 2));
+const segments = parsePath("M5 6 7 8l3 4z");
+console.log(JSON.stringify(segments, null, 2));
 ```
 
 ```json

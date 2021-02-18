@@ -1,9 +1,5 @@
 'use strict';
 
-const UPPER_COMMANDS = [
-  0x41, 0x43, 0x48, 0x4C, 0x4D, 0x56, 0x51, 0x53, 0x54, 0x5A
-];
-
 const COMMANDS_PARAMS_COUNTS = {
   // lowercase commands
   0x61: 7,
@@ -27,6 +23,29 @@ const COMMANDS_PARAMS_COUNTS = {
   0x51: 4,
   0x53: 4,
   0x54: 2,
+  0x5A: 0,
+};
+
+const ADVANCE_INDEX_BY_PARAM_COUNTS = {
+  0x41: 11,
+  0x61: 11,
+  0x63: 11,
+  0x43: 11,
+  0x68: 1,
+  0x76: 1,
+  0x48: 1,
+  0x56: 1,
+  0x6C: 3,
+  0x6D: 3,
+  0x74: 3,
+  0x4C: 3,
+  0x4D: 3,
+  0x54: 3,
+  0x71: 7,
+  0x73: 7,
+  0x51: 7,
+  0x53: 7,
+  0x7A: 0,
   0x5A: 0,
 };
 
@@ -98,7 +117,7 @@ const scanSegment = function (d, needParams, abs, start, end, segments) {
               }
               _foundPoint = true;
             } else if (code === 0x2D || code === 0x2B) {  // + -
-              if (!_foundExp && (_foundPoint || _foundOp)) {
+              if (!_foundExp && (_numberAsString.length > 0 || _foundPoint || _foundOp)) {
                 break;
               }
               _foundOp = true;
@@ -158,20 +177,21 @@ const svgPathParse = function (d) {
 
   let _currStartIndex, code, _previousCode, needParams, _previousNeedParams;
   for (let i = 0; i < d.length; i++) {
+    // console.log(i, d[i])
     code = d.charCodeAt(i);
     needParams = COMMANDS_PARAMS_COUNTS[code];
     if (needParams !== undefined) {
       if (_currStartIndex !== undefined) {
         scanSegment(
           d, _previousNeedParams,
-          UPPER_COMMANDS.indexOf(_previousCode) > -1,
+          (_previousCode < 0x5B),  // is uppercase
           _currStartIndex,
           i - 1,
           segments
         );
       }
       _currStartIndex = i;
-      i += (needParams ? (needParams * 2 - 1) : 0);
+      i += ADVANCE_INDEX_BY_PARAM_COUNTS[code];
       _previousCode = code;
       _previousNeedParams = needParams;
     }
@@ -179,7 +199,7 @@ const svgPathParse = function (d) {
   scanSegment(
     d,
     _previousNeedParams,
-    UPPER_COMMANDS.indexOf(_previousCode) > -1,
+    (_previousCode < 0x5B),
     _currStartIndex,
     d.length - 1,
     segments
