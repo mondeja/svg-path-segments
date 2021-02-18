@@ -112,6 +112,8 @@ contain next properties:
 | Absolutes | YES | NO |
 | Segments indexing | YES | NO |
 | Chained commands | YES | NO |
+| Catmull-Rom curve commands (`R`/`r`) | NO | YES |
+| Bearing commands (`B`/`b`) | NO | NO |
 | First `m` converted to `M` | NO | YES |
 | Chained `M`/`m` converted to `L`/`l` | NO | YES |
 | Check path should start with `m`/`M` | NO | YES |
@@ -122,8 +124,23 @@ contain next properties:
 | Check invalid float exponents | NO | YES |
 
 > Benchmarks are orientative, if you want to perform your own, run the script
-  [scripts/simple-icons-benchmark.js](https://github.com/mondeja/svg-path-segments/blob/master/scripts/simple-icons-benchmark.js).
+  [scripts/simple-icons-benchmark.js][si-benchmark-link].
 
+### Usage with [fontello/svgpath](https://github.com/fontello/svgpath)
+
+```js
+const svgpath = require("svgpath");
+const parsePath = require("svg-path-segments");
+
+function segmentsSVGPath(iconPath) {
+  const segments = parsePath(iconPath);
+  const SVGPath = svgpath("");
+  SVGPath.segments = segments.map(segment => segment.params);
+  return {segments, SVGPath};
+}
+
+const {segments, SVGPath} = segmentsSVGPath("M5 6 7 8l3 4z");
+```
 
 [npm-link]: https://www.npmjs.com/package/svg-path-segments
 [npm-version-image]: https://img.shields.io/npm/v/svg-path-segments
@@ -133,3 +150,4 @@ contain next properties:
 [coverage-link]: https://coveralls.io/github/mondeja/svg-path-segments?branch=master
 [license-image]: https://img.shields.io/npm/l/svg-path-segments?color=brightgreen
 [license-link]: https://github.com/mondeja/svg-path-segments/blob/master/LICENSE
+[si-benchmark-link]: https://github.com/mondeja/svg-path-segments/blob/master/scripts/simple-icons-benchmark.js
