@@ -26,9 +26,25 @@ jobs:
       run: npm ci
     - name: Test
       run: npm test
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use NodeJS v14
+        uses: actions/setup-node@v2.1.4
+        with:
+          node-version: 14.x
+      - name: Install
+        run: npm ci
+      - name: Lint
+        run: npm run lint
+
   npm:
     if: startsWith(github.ref, 'refs/tags/')
-    needs: test
+    needs:
+      - test
+      - lint
     name: NPM Package
     runs-on: ubuntu-latest
     steps:

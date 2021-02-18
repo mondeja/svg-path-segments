@@ -6,15 +6,17 @@ const {runLibrariesBenchmarkComparison} = require('./benchmark.js');
 
 const EPOCHS = [1000];
 
+const MAX_ICONS = 50;
+
 const main = function () {
   const paths = {};
 
-  var counter = 1;
+  let counter = 1;
   for (const iconName in simpleIcons) {
     const path = simpleIcons[iconName].path;
     paths[iconName] = path;
-    
-    if (counter > 10) {
+
+    if (counter > MAX_ICONS) {
       break;
     }
     counter++;

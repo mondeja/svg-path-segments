@@ -1,184 +1,177 @@
-"use strict"
+'use strict';
 
-const pathParse = require("./../src/index.js");
+const pathParse = require('./../src/index.js');
 
 const commandCases = [
   // Mm
   [
-    "M5 3",
+    'M5 3',
     [
-      {cmd: "M", raw: "M5 3", start: 0, end: 3, chained: false, params: [5, 3]},
+      {start: 0, end: 4, chained: false, params: ['M', 5, 3], abs: true},
     ]
   ],
   [
-    "m5 3",
+    'm5 3',
     [
-      {cmd: "m", raw: "m5 3", start: 0, end: 3, chained: false, params: [5, 3]},
+      {start: 0, end: 4, chained: false, params: ['m', 5, 3], abs: false},
     ]
   ],
-  
+
   // Ll
   [
-    "L5 3",
+    'L5 3',
     [
-      {cmd: "L", raw: "L5 3", start: 0, end: 3, chained: false, params: [5, 3]},
+      {start: 0, end: 4, chained: false, params: ['L', 5, 3], abs: true},
     ]
   ],
   [
-    "l5 3",
+    'l5 3',
     [
-      {cmd: "l", raw: "l5 3", start: 0, end: 3, chained: false, params: [5, 3]},
+      {start: 0, end: 4, chained: false, params: ['l', 5, 3], abs: false},
     ]
   ],
-  
+
   // Hh
   [
-    "H5",
+    'H5',
     [
-      {cmd: "H", raw: "H5", start: 0, end: 1, chained: false, params: [5]},
+      {start: 0, end: 2, chained: false, params: ['H', 5], abs: true},
     ]
   ],
   [
-    "h5",
+    'h5',
     [
-      {cmd: "h", raw: "h5", start: 0, end: 1, chained: false, params: [5]},
+      {start: 0, end: 2, chained: false, params: ['h', 5], abs: false},
     ]
   ],
-  
+
   // Vv
   [
-    "V5",
+    'V5',
     [
-      {cmd: "V", raw: "V5", start: 0, end: 1, chained: false, params: [5]},
+      {start: 0, end: 2, chained: false, params: ['V', 5], abs: true},
     ]
   ],
   [
-    "v5",
+    'v5',
     [
-      {cmd: "v", raw: "v5", start: 0, end: 1, chained: false, params: [5]},
+      {start: 0, end: 2, chained: false, params: ['v', 5], abs: false},
     ]
   ],
-  
+
   // Zz
   [
-    "Z",
+    'Z',
     [
-      {cmd: "Z", raw: "Z", start: 0, end: 0, chained: false, params: []},
+      {start: 0, end: 1, chained: false, params: ['Z'], abs: true},
     ]
   ],
   [
-    "z",
+    'z',
     [
-      {cmd: "z", raw: "z", start: 0, end: 0, chained: false, params: []},
+      {start: 0, end: 1, chained: false, params: ['z'], abs: false},
     ]
   ],
-  
+
   // Cc
   [
-    "C-.805.062-1.434.77-1.434 1.61",
+    'C-.805.062-1.434.77-1.434 1.61',
     [
       {
-        cmd: "C", raw: "C-.805.062-1.434.77-1.434 1.61", start: 0, end: 29,
-        chained: false, params: [-.805, .062, -1.434, .77, -1.434, 1.61]
+        start: 0, end: 30, params: ['C', -.805, .062, -1.434, .77, -1.434, 1.61],
+        chained: false, abs: true,
       }
     ]
   ],
   [
-    "c-.429-.893-1.034-1.284",
+    'c-.805.062-.429-.893-1.034-1.284',
     [
       {
-        cmd: "c", raw: "c-.429-.893-1.034-1.284", start: 0, end: 22,
-        chained: false, params: [-.429, -.893, -1.034, -1.284]
+        start: 0, end: 32, params: ['c', -.805, .062, -.429, -.893, -1.034, -1.284],
+        chained: false, abs: false,
       }
     ]
   ],
-  
+
   // Tt
   [
-    "T.11-.33",
+    'T.11-.33',
     [
-      {
-        cmd: "T", raw: "T.11-.33", start: 0, end: 7, chained: false,
-        params: [.11, -.33]
-      }
+      {start: 0, end: 8, chained: false, params: ['T', .11, -.33], abs: true}
     ]
   ],
   [
-    "t.11-.33",
+    't.11-.33',
     [
       {
-        cmd: "t", raw: "t.11-.33", start: 0, end: 7, chained: false,
-        params: [.11, -.33]
-      }
+        start: 0, end: 8, chained: false, params: ['t', .11, -.33], abs: false}
     ]
   ],
-  
+
   // Aa
   [
-    "A.72.72 0 0023.28 0",
+    'A.72.72 0 0023.28 0',
     [
       {
-        cmd: "A", raw: "A.72.72 0 0023.28 0", start: 0, end: 18,
-        chained: false, params: [.72, .72, 0, 0, 0, 23.28, 0]
+        start: 0, end: 19, params: ['A', .72, .72, 0, 0, 0, 23.28, 0],
+        chained: false, abs: true,
       }
     ]
   ],
   [
-    "a0 0023.28 0",
+    'a.72.72 90 1023.28 0',
     [
       {
-        cmd: "a", raw: "a0 0023.28 0", start: 0, end: 11,
-        chained: false, params: [0, 0, 0, 23.28, 0]
+        start: 0, end: 20, params: ['a', .72, .72, 90, 1, 0, 23.28, 0],
+        chained: false, abs: false,
       }
     ]
   ],
-  
+
   // Ss
   [
-    "S.036 18.858 0 17.347",
+    'S.036 18.858 0 17.347',
     [
       {
-        cmd: "S", raw: "S.036 18.858 0 17.347", start: 0, end: 20,
-        chained: false, params: [.036, 18.858, 0, 17.347]
+        start: 0, end: 21, abs: true,
+        chained: false, params: ['S', .036, 18.858, 0, 17.347]
       }
     ]
   ],
   [
-    "s.036 18.858 0 17.347",
+    's.036 18.858 0 17.347',
     [
       {
-        cmd: "s", raw: "s.036 18.858 0 17.347", start: 0, end: 20,
-        chained: false, params: [.036, 18.858, 0, 17.347]
+        start: 0, end: 21, abs: false,
+        chained: false, params: ['s', .036, 18.858, 0, 17.347]
       }
     ]
   ],
-  
+
   // Qq
   [
-    "Q.14 0 .25.12",
+    'Q.14 0 .25.12',
     [
       {
-        cmd: "Q", raw: "Q.14 0 .25.12", start: 0, end: 12,
-        chained: false, params: [.14, 0, .25, .12]
+        start: 0, end: 13, abs: true, params: ['Q', .14, 0, .25, .12],
+        chained: false,
       }
     ]
   ],
   [
-    "q.14 0 .25.12",
+    'q.14 0 .25.12',
     [
       {
-        cmd: "q", raw: "q.14 0 .25.12", start: 0, end: 12,
-        chained: false, params: [.14, 0, .25, .12]
+        start: 0, end: 13, abs: false,
+        chained: false, params: ['q', .14, 0, .25, .12]
       }
     ]
   ],
 ];
 
-describe("pathParse(d) [Command cases]", () => {
+describe('pathParse(d) [Command cases]', () => {
   test.each(commandCases)(
-    "parsePath(%p) ⇢ %p",
-    (d, segments) => {
-      expect(pathParse(d).segments).toEqual(segments);
-    }
+    'parsePath(%p) ⇢ %p',
+    (d, segments) => expect(pathParse(d)).toEqual(segments)
   );
 });

@@ -1,58 +1,65 @@
-'use strict'
+'use strict';
 
-const pathParse = require("./../src/index.js");
+const pathParse = require('./../src/index.js');
 
 const chainsCases = [
   // MmLl
   [
-    "M5 6l3 4 1 2z",
+    'M5 6l3 4 1 2z',
     [
-      {cmd: "M", raw: "M5 6", start: 0, end: 3, chained: false, params: [5, 6]},
-      {cmd: "l", raw: "l3 4", start: 4, end: 7, chained: false, params: [3, 4]},
+      {start: 0, end: 4, chained: false, params: ['M', 5, 6], abs: true},
       {
-        cmd: "l", raw: "1 2", start: 9, end: 11, chained: true,
-        chainStart: 4, chainEnd: 11, params: [1, 2],
+        start: 4, end: 8, params: ['l', 3, 4], abs: false,
+        chained: true, chainStart: 4, chainEnd: 12
       },
-      {cmd: "z", raw: "z", start: 12, end: 12, chained: false, params: []},
+      {
+        start: 9, end: 12, params: ['l', 1, 2], abs: false,
+        chained: true, chainStart: 4, chainEnd: 12,
+      },
+      {start: 12, end: 13, abs: false, chained: false, params: ['z']},
     ]
   ],
-  
+
   // HhVv
   [
-    "H3 4 1 2v3 .2.1z",
+    'H3 4 1 2v3 .2.1z',
     [
-      {cmd: "H", raw: "H3", start: 0, end: 1, chained: false, params: [3]},
       {
-        cmd: "H", raw: "4", start: 3, end: 3, chained: true,
-        chainStart: 0, chainEnd: 7, params: [4]
+        start: 0, end: 2, chained: true, params: ['H', 3],
+        abs: true, chainStart: 0, chainEnd: 8,
       },
       {
-        cmd: "H", raw: "1", start: 5, end: 5, chained: true,
-        chainStart: 0, chainEnd: 7, params: [1]
+        start: 3, end: 4, chained: true, abs: true,
+        chainStart: 0, chainEnd: 8, params: ['H', 4]
       },
       {
-        cmd: "H", raw: "2", start: 7, end: 7, chained: true,
-        chainStart: 0, chainEnd: 7, params: [2]
-      },
-      {cmd: "v", raw: "v3", start: 8, end: 9, chained: false, params: [3]},
-      {
-        cmd: "v", raw: ".2", start: 11, end: 12, chained: true,
-        chainStart: 8, chainEnd: 14, params: [.2]
+        start: 5, end: 6, chained: true, abs: true,
+        chainStart: 0, chainEnd: 8, params: ['H', 1]
       },
       {
-        cmd: "v", raw: ".1", start: 13, end: 14, chained: true,
-        chainStart: 8, chainEnd: 14, params: [.1]
+        start: 7, end: 8, chained: true, abs: true,
+        chainStart: 0, chainEnd: 8, params: ['H', 2]
       },
-      {cmd: "z", raw: "z", start: 15, end: 15, chained: false, params: []},
+      {
+        start: 8, end: 10, abs: false, params: ['v', 3],
+        chained: true, chainStart: 8, chainEnd: 15,
+      },
+      {
+        start: 11, end: 13, chained: true, abs: false,
+        chainStart: 8, chainEnd: 15, params: ['v', .2]
+      },
+      {
+        start: 13, end: 15, chained: true, abs: false,
+        chainStart: 8, chainEnd: 15, params: ['v', .1]
+      },
+      {start: 15, end: 16, chained: false, params: ['z'], abs: false},
     ]
   ]
 ];
 
-describe("pathParse(d) [Chains cases]", () => {
+describe('pathParse(d) [Chains cases]', () => {
   test.each(chainsCases)(
-    "parsePath(%p) ⇢ %p",
-    (d, segments) => {
-      expect(pathParse(d).segments).toEqual(segments);
-    }
+    'parsePath(%p) ⇢ %p',
+    (d, segments) => expect(pathParse(d)).toEqual(segments)
   );
 });

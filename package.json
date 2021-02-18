@@ -4,8 +4,10 @@
   "description": "Faster SVG path parser for Javascript",
   "main": "index.js",
   "scripts": {
-    "build": "node-gyp configure && node-gyp build",
-    "test": "jest"
+    "coveralls": "cat ./tests/coverage/lcov.info | coveralls",
+    "lint": "node_modules/.bin/eslint src tests scripts",
+    "lintfix": "npm run lint -- --fix",
+    "test": "node_modules/.bin/jest"
   },
   "keywords": [
     "svg",
@@ -14,15 +16,36 @@
   ],
   "author": "Álvaro Mondéjar Rubio",
   "license": "GPL-3.0",
-  "dependencies": {
-    "@gfx/zopfli": "^1.0.15",
-    "node-addon-api": "*"
-  },
   "devDependencies": {
+    "coveralls": "^3.1.0",
+    "eslint": "^7.20.0",
+    "eslint-config-mourner": "^3.0.0",
     "jest": "26.6.3",
-    "node-gyp": "^7.1.2",
     "simple-icons": "^4.10.0",
     "svgpath": "2.3.0"
   },
-  "gypfile": true
+  "eslintConfig": {
+    "env": {
+      "node": true,
+      "jest": true
+    },
+    "extends": "mourner",
+    "rules": {
+      "linebreak-style": [
+        2,
+        "unix"
+      ],
+      "no-mixed-spaces-and-tabs": 2,
+      "indent": [
+        "error",
+        2
+      ],
+      "curly": 2,
+      "spaced-comment": 2
+    }
+  },
+  "jest": {
+    "collectCoverage": true,
+    "coverageDirectory": "<rootDir>/tests/coverage"
+  }
 }

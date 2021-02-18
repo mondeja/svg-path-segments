@@ -1,6 +1,6 @@
 'use strict';
 
-const {pathParse} = require('./../build/Release/svg-path-parser');
+const pathParse = require('./../src/index');
 const svgPathParse = require('svgpath/lib/path_parse');
 
 const LIBRARIES = {
@@ -24,13 +24,14 @@ const EPOCHS = [10000, 100000];
 
 const runLibrariesBenchmarkComparison = function (paths, epochs) {
   const _paths = [];
-  if (typeof paths === 'object') {
-    for (const key in paths) {
-      _paths.push([paths[key], key]);
-    }
-  } else {
+  if (Object.prototype.toString.call(paths) === '[object Array]') {
     for (let _p = 0; _p < paths.length; _p++) {
       _paths.push([paths[_p], null]);
+    }
+  } else {
+    // identifier -> path
+    for (const key in paths) {
+      _paths.push([paths[key], key]);
     }
   }
 
@@ -43,46 +44,51 @@ const runLibrariesBenchmarkComparison = function (paths, epochs) {
       const pathSub = path[0].length > 25 ?
         `${path[0].substring(0, 25)}...` : path;
 
-      if (_paths[p][1]) {
+      if (_paths[p][1]) {  // paths with identifier
         process.stdout.write(`${_paths[p][1]} - `);
       }
 
-      console.log(`${pathSub} (type ${pathType}) [${epochs[e]} epochs]`);
+      process.stdout.write(
+        `${pathSub} (type ${pathType}) [${epochs[e]} epochs]\n`
+      );
       for (const library in LIBRARIES) {
-        //console.time(library);
+        // console.time(library);
         const begin = Date.now();
         const func = LIBRARIES[library]['func'];
-        let _errorRaised = false, result;
+
+        let result;
         let _nSegments, err;
         for (let r = 0; r < epochs[e]; r++) {
           result = func(path[0]);
-          _nSegments = result.segments.length;
+          if (Object.prototype.toString.call(result) === '[object Array]') {
+            _nSegments = result.length;
+          } else {
+            _nSegments = result.segments.length;
+          }
           if (result.err) {
             err = result.err;
           }
         }
-        if (err) {
-          console.error(err);
-        } else {
-          console.log(` Number of segments: ${_nSegments}`)
-        }
-        //console.timeEnd(library);
+
+        // console.timeEnd(library);
         const end = Date.now();
         const timeSpent = end - begin;
-        process.stdout.write('  ' + library + ': ' + timeSpent + 'ms\n');
-        LIBRARIES[library]["total"] += timeSpent;
-        /*if (result) {
-          console.log('    + result:', result);
-        }*/
+        process.stdout.write(`  ${library}: ${timeSpent} ms\n`);
+        if (err) {
+          process.stderr.write(`    ${err}\n`);
+        } else {
+          process.stdout.write(`    Number of segments: ${_nSegments}\n`);
+        }
+        LIBRARIES[library]['total'] += timeSpent;
       }
-      console.log();
+      process.stdout.write('\n');
     }
   }
-  
+
   for (const library in LIBRARIES) {
-    console.log(library)
-    console.log(`  total: ${LIBRARIES[library]["total"]}ms`)
-    console.log(`  median: ${LIBRARIES[library]["total"] / _paths.length}ms`)
+    process.stdout.write(`${library}\n`);
+    process.stdout.write(`  total: ${LIBRARIES[library]['total']} ms\n`);
+    process.stdout.write(`  median: ${LIBRARIES[library]['total'] / _paths.length} ms\n`);
   }
 };
 
