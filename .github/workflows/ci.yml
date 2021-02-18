@@ -26,6 +26,11 @@ jobs:
       run: npm ci
     - name: Test
       run: npm test
+    - name: Coverage
+      uses: coverallsapp/github-action@v1.1.2
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        path-to-lcov: ./tests/coverage/lcov.info
   lint:
     name: Lint
     runs-on: ubuntu-latest

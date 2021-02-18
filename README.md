@@ -2,7 +2,6 @@
 
 [![NPM version][npm-version-image]][npm-link]
 [![License][license-image]][license-link]
-[![NodeJS versions][npm-versions-image]][npm-link]
 [![Tests][tests-image]][tests-link]
 [![Coverage status][coverage-image]][coverage-link]
 
@@ -79,16 +78,13 @@ console.log(JSON.stringify(result, null, 2));
 
 ### Reference
 
-<a name="svgPathParse" href="#svgPathParse">#</a> <b>svgPathParse</b>(<i>d</i>) ⇒ `Array`
+<a name="svgPathParse" href="#svgPathParse">#</a> <b>svgPathParse</b>(<i>d</i>)
+⇒ `Array`
 
-#### Parameters
+- **d** (string) SVG path.
 
-- **d** (string) SVG path. 
-
-#### Returns
-
-Segments of the SVG path. The result is an array of objects which contain next
-properties:
+Returns the segments of the SVG path. The result is an array of objects which
+contain next properties:
 
 - **`start`** (*Integer*): Index of the first character of the segment.
 - **`end`** (*Integer*): Index of the first character after the segment. Note
@@ -109,10 +105,9 @@ properties:
 
 [npm-link]: https://www.npmjs.com/package/svg-path-segments
 [npm-version-image]: https://img.shields.io/npm/v/svg-path-segments
-[tests-image]: https://img.shields.io/github/workflow/status/mondeja/svg-path-segments/Test
-[tests-link]: https://github.com/mondeja/svg-path-segments/actions?query=workflow%3ATest
+[tests-image]: https://img.shields.io/github/workflow/status/mondeja/svg-path-segments/CI
+[tests-link]: https://github.com/mondeja/svg-path-segments/actions?query=workflow%3ACI
 [coverage-image]: https://coveralls.io/repos/github/mondeja/svg-path-segments/badge.svg?branch=master
 [coverage-link]: https://coveralls.io/github/mondeja/svg-path-segments?branch=master
 [license-image]: https://img.shields.io/npm/l/svg-path-segments?color=brightgreen
 [license-link]: https://github.com/mondeja/svg-path-segments/blob/master/LICENSE
-[npm-versions-image]: https://img.shields.io/node/v/svg-path-segments
