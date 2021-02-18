@@ -153,7 +153,7 @@ const scanSegment = function (d, needParams, abs, start, end, segments) {
   }
 };
 
-const pathParse = function (d) {
+const svgPathParse = function (d) {
   const segments = [];
 
   let _currStartIndex, code, _previousCode, needParams, _previousNeedParams;
@@ -188,4 +188,4 @@ const pathParse = function (d) {
   return segments;
 };
 
-module.exports = pathParse;
+module.exports = svgPathParse;

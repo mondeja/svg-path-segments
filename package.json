@@ -1,8 +1,9 @@
 {
-  "name": "svg-path-parser",
+  "name": "svg-path-segments",
   "version": "0.0.1",
-  "description": "Faster SVG path parser for Javascript",
-  "main": "index.js",
+  "description": "Fast SVG path parser for Javascript.",
+  "main": "src/index.js",
+  "browser": "src/index.js",
   "scripts": {
     "coveralls": "cat ./tests/coverage/lcov.info | coveralls",
     "lint": "node_modules/.bin/eslint src tests scripts",
@@ -16,12 +17,21 @@
   ],
   "author": "Álvaro Mondéjar Rubio",
   "license": "GPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mondeja/svg-path-segments.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mondeja/svg-path-segments/issues",
+    "email": "mondejar1994@gmail.com"
+  },
+  "files": "src",
   "devDependencies": {
-    "coveralls": "^3.1.0",
-    "eslint": "^7.20.0",
-    "eslint-config-mourner": "^3.0.0",
+    "coveralls": "3.1.0",
+    "eslint": "7.20.0",
+    "eslint-config-mourner": "3.0.0",
     "jest": "26.6.3",
-    "simple-icons": "^4.11.0",
+    "simple-icons": "4.11.0",
     "svgpath": "2.3.1"
   },
   "eslintConfig": {
