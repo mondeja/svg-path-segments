@@ -102,6 +102,28 @@ contain next properties:
  set of segments to which the segment belongs. Note that you can use
  `d.substring(result.chainStart, result.chainEnd)` to get the raw string
   representation of the chained set of segments.
+  
+### Comparison against other implementations
+
+|  | svg-path-segments | svgpath |
+|---|---|---|
+| Require | `require("svg-path-segments")` | `require("svgpath/lib/path_parse")` |
+| Benchmark | ~54ms | ~79ms |
+| Absolutes | YES | NO |
+| Segments indexing | YES | NO |
+| Chained commands | YES | NO |
+| First `m` converted to `M` | NO | YES |
+| Chained `M`/`m` converted to `L`/`l` | NO | YES |
+| Check path should start with `m`/`M` | NO | YES |
+| Check bad command characters | NO | YES |
+| Check missed parameters | NO | YES |
+| Check leading zeros in numbers | NO | YES |
+| Check arc flag `0` or `1` | NO | YES |
+| Check invalid float exponents | NO | YES |
+
+> Benchmarks are orientative, if you want to perform your own, run the script
+  [scripts/simple-icons-benchmark.js](https://github.com/mondeja/svg-path-segments/blob/master/scripts/simple-icons-benchmark.js).
+
 
 [npm-link]: https://www.npmjs.com/package/svg-path-segments
 [npm-version-image]: https://img.shields.io/npm/v/svg-path-segments
