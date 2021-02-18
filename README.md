@@ -108,7 +108,7 @@ contain next properties:
 |  | svg-path-segments | svgpath |
 |---|---|---|
 | Require | `require("svg-path-segments")` | `require("svgpath/lib/path_parse")` |
-| Benchmark | ~54ms | ~79ms |
+| Benchmark\* | ~54ms | ~79ms |
 | Absolutes | YES | NO |
 | Segments indexing | YES | NO |
 | Chained commands | YES | NO |
@@ -123,7 +123,7 @@ contain next properties:
 | Check arc flag `0` or `1` | NO | YES |
 | Check invalid float exponents | NO | YES |
 
-> Benchmarks are orientative, if you want to perform your own, run the script
+> \* Benchmarks are orientative, if you want to perform your own, run the script
   [scripts/simple-icons-benchmark.js][si-benchmark-link].
 
 ### Usage with [fontello/svgpath](https://github.com/fontello/svgpath)
