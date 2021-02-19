@@ -172,10 +172,11 @@ const scanSegment = function (d, needParams, abs, start, end, segments) {
 };
 
 const svgPathParse = function (d) {
-  const segments = [];
+  const segments = [], pathLength = d.length;
+  let _currStartIndex, code, _previousCode, needParams, _previousNeedParams,
+    i = 0;
 
-  let _currStartIndex, code, _previousCode, needParams, _previousNeedParams;
-  for (let i = 0; i < d.length; i++) {
+  while (i < pathLength) {
     code = d.charCodeAt(i);
     needParams = COMMANDS_PARAMS_COUNTS[code];
     if (needParams !== undefined) {
@@ -193,13 +194,14 @@ const svgPathParse = function (d) {
       _previousCode = code;
       _previousNeedParams = needParams;
     }
+    i++;
   }
   scanSegment(
     d,
     _previousNeedParams,
     _previousCode < 0x5B,
     _currStartIndex,
-    d.length - 1,
+    pathLength - 1,
     segments
   );
 
