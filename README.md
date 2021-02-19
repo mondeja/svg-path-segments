@@ -5,7 +5,7 @@
 [![Coverage status][coverage-image]][coverage-link]
 
 A fast SVG path parser implementation for Javascript. Does not perform checks
-on input data, but allows to rebuild original SVG segments from the result.
+on input data, but allows to rebuild original path segments from the result.
 
 [![License][license-image]][license-link]
 
