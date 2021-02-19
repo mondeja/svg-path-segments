@@ -16,7 +16,7 @@ npm install svg-path-segments
 
 ## Documentation
 
-### Usage
+### Public API
 
 ```js
 const parsePath = require("svg-path-segments");
@@ -74,6 +74,12 @@ console.log(JSON.stringify(segments, null, 2));
     "chained": false
   }
 ]
+```
+
+### CLI
+
+```bash
+svg-path-segments --pretty "M5 6 7 8l3 4z"
 ```
 
 ### Reference

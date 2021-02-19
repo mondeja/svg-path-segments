@@ -3,6 +3,9 @@
   "version": "0.1.4",
   "description": "Fast SVG path parser for Javascript.",
   "main": "src/index.js",
+  "bin": {
+    "svg-path-segments": "src/cli.js"
+  },
   "browser": "src/index.js",
   "scripts": {
     "coveralls": "cat ./tests/coverage/lcov.info | coveralls",
