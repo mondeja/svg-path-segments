@@ -1,0 +1,6 @@
+.editorconfig
+__dev__.js
+tests
+.gitattributes
+scripts
+.github
