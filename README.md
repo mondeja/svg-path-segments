@@ -90,8 +90,8 @@ svg-path-segments --pretty "M5 6 7 8l3 4z"
 
 - **d** (string) SVG path.
 
-Returns the segments of the SVG path. The result is an array of objects which
-contain next properties:
+Returns the segments of the SVG path. The result is an array of objects, one
+per segment, which contain next properties:
 
 - **`start`** (*Integer*): Index of the first character of the segment.
 - **`end`** (*Integer*): Index of the first character after the segment. Note
@@ -99,17 +99,18 @@ contain next properties:
  representation of the segment.
 - **`params`** (*Array*): Parameters of the segment. The first parameter always
  is the command that draws the segment.
-- **`abs`** (*Boolean*): Indicates that the segment has absolute coordinates.
+- **`abs`** (*Boolean*): Indicates that the coordinates of the segment are
+ absolute.
 - **`chained`** (*Boolean*): Indicates that the segment is part of a chained
- set of segments. If this property is `true`, the object will contain the
+ set of segments. If this property is `true`, the object will also contain the
  properties `chainStart` and `chainEnd`.
-- **`chainStart`** (*Integer*): Index of the first character of the chained set
- of segments to which the segment belongs.
-- **`chainEnd`** (*Integer*): Index of the first character after the chained
- set of segments to which the segment belongs. Note that you can use
+- **`chainStart`** (optional, *Integer*): Index of the first character of the
+ chained set of segments to which the segment belongs.
+- **`chainEnd`** (optional, *Integer*): Index of the first character after the
+ chained set of segments to which the segment belongs. Note that you can use
  `d.substring(result.chainStart, result.chainEnd)` to get the raw string
-  representation of the chained set of segments.
-  
+  representation of the chained set of segments to which the segment belongs.
+
 ### Comparison against other implementations
 
 |  | svg-path-segments | svgpath |
