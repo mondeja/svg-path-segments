@@ -1,12 +1,13 @@
 # svg-path-segments
 
 [![NPM version][npm-version-image]][npm-link]
-[![License][license-image]][license-link]
 [![Tests][tests-image]][tests-link]
 [![Coverage status][coverage-image]][coverage-link]
 
 A fast SVG path parser implementation for Javascript. Does not perform checks
-on input data, but allows to rebuild all SVG commands from the result.
+on input data, but allows to rebuild original SVG segments from the result.
+
+[![License][license-image]][license-link]
 
 ## Install
 
@@ -149,10 +150,10 @@ const {segments, SVGPath} = segmentsSVGPath("M5 6 7 8l3 4z");
 ```
 
 [npm-link]: https://www.npmjs.com/package/svg-path-segments
-[npm-version-image]: https://img.shields.io/npm/v/svg-path-segments
-[tests-image]: https://img.shields.io/github/workflow/status/mondeja/svg-path-segments/CI
+[npm-version-image]: https://img.shields.io/npm/v/svg-path-segments?logo=NPM
+[tests-image]: https://img.shields.io/github/workflow/status/mondeja/svg-path-segments/CI?logo=github
 [tests-link]: https://github.com/mondeja/svg-path-segments/actions?query=workflow%3ACI
-[coverage-image]: https://coveralls.io/repos/github/mondeja/svg-path-segments/badge.svg?branch=master
+[coverage-image]: https://img.shields.io/coveralls/github/mondeja/svg-path-segments?logo=coveralls
 [coverage-link]: https://coveralls.io/github/mondeja/svg-path-segments?branch=master
 [license-image]: https://img.shields.io/npm/l/svg-path-segments?color=brightgreen
 [license-link]: https://github.com/mondeja/svg-path-segments/blob/master/LICENSE

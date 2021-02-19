@@ -19,12 +19,12 @@ Optional arguments:
   -p, --pretty          Pretty-print JSON output.
   -i N, --indent N      Number of spaces for indentation used pretty-printing JSON output. Only takes effect passing '--pretty' option.
 `
-  )
+  );
   process.exit(1);
 }
 
 function printVersion() {
-  const version = require("./../package.json").version;
+  const version = require('./../package.json').version;
   process.stderr.write(`${version}\n`);
   process.exit(1);
 }
@@ -36,34 +36,34 @@ if (require.main === module) {
   }
   const args = process.argv.slice(sliceN, process.argv.length);
 
-  if (args.indexOf("-h") > -1 || args.indexOf("--help") > -1) {
+  if (args.indexOf('-h') > -1 || args.indexOf('--help') > -1) {
     printHelp();
-  } else if (args.indexOf("-v") > -1 || args.indexOf("--version") > -1) {
+  } else if (args.indexOf('-v') > -1 || args.indexOf('--version') > -1) {
     printVersion();
-  };
-  
+  }
+
   let arg = args.shift(),
-      pretty = false,
-      _parsingIndent = false,
-      indent = 2,
-      d = null;
+    pretty = false,
+    _parsingIndent = false,
+    indent = 2,
+    d = null;
   while (arg) {
     switch (arg) {
-      case "-p":
-      case "--pretty":
-        pretty = true;
-        break;
-      case "-i":
-      case "--indent":
-        _parsingIndent = true;
-        break;
-      default:
-        if (_parsingIndent) {
-          _parsingIndent = false;
-          indent = parseInt(arg);
-        } else {
-          d = arg;
-        }
+    case '-p':
+    case '--pretty':
+      pretty = true;
+      break;
+    case '-i':
+    case '--indent':
+      _parsingIndent = true;
+      break;
+    default:
+      if (_parsingIndent) {
+        _parsingIndent = false;
+        indent = parseInt(arg);
+      } else {
+        d = arg;
+      }
     }
     arg = args.shift();
   }
@@ -72,9 +72,9 @@ if (require.main === module) {
     printHelp();
   }
 
-  const parsePath = require("./index.js");
+  const parsePath = require('./index.js');
   const segments = parsePath(d);
-  
+
   if (pretty) {
     process.stdout.write(`${JSON.stringify(segments, null, indent)}\n`);
   } else {
