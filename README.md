@@ -108,7 +108,7 @@ contain next properties:
 |  | svg-path-segments | svgpath |
 |---|---|---|
 | Require | `require("svg-path-segments")` | `require("svgpath/lib/path_parse")` |
-| Benchmark\* | ~54ms | ~79ms |
+| Benchmark\* | ~50ms | ~75ms |
 | Absolutes | YES | NO |
 | Segments indexing | YES | NO |
 | Chained commands | YES | NO |
@@ -118,7 +118,7 @@ contain next properties:
 | Chained `M`/`m` converted to `L`/`l` | NO | YES |
 | Check path should start with `m`/`M` | NO | YES |
 | Check bad command characters | NO | YES |
-| Check missed parameters | NO | YES |
+| Check missing parameters | NO | YES |
 | Check leading zeros in numbers | NO | YES |
 | Check arc flag `0` or `1` | NO | YES |
 | Check invalid float exponents | NO | YES |
@@ -132,7 +132,7 @@ contain next properties:
 const svgpath = require("svgpath");
 const parsePath = require("svg-path-segments");
 
-function segmentsSVGPath(iconPath) {
+const segmentsSVGPath = (iconPath) => {
   const segments = parsePath(iconPath);
   const SVGPath = svgpath("");
   SVGPath.segments = segments.map(segment => segment.params);

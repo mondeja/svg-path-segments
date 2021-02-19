@@ -1,57 +1,56 @@
 'use strict';
 
 const COMMANDS_PARAMS_COUNTS = {
-  // lowercase commands
-  0x61: 7,
-  0x63: 6,
-  0x68: 1,
-  0x6C: 2,
-  0x6D: 2,
-  0x76: 1,
-  0x71: 4,
-  0x73: 4,
-  0x74: 2,
-  0x7A: 0,
+  0x61: 7,  // a
+  0x63: 6,  // c
+  0x68: 1,  // h
+  0x6C: 2,  // l
+  0x6D: 2,  // m
+  0x76: 1,  // v
+  0x71: 4,  // q
+  0x73: 4,  // s
+  0x74: 2,  // t
+  0x7A: 0,  // z
 
-  // uppercase commands
-  0x41: 7,
-  0x43: 6,
-  0x48: 1,
-  0x4C: 2,
-  0x4D: 2,
-  0x56: 1,
-  0x51: 4,
-  0x53: 4,
-  0x54: 2,
-  0x5A: 0,
+  0x41: 7,  // A
+  0x43: 6,  // C
+  0x48: 1,  // H
+  0x4C: 2,  // L
+  0x4D: 2,  // M
+  0x56: 1,  // V
+  0x51: 4,  // Q
+  0x53: 4,  // S
+  0x54: 2,  // T
+  0x5A: 0,  // Z
 };
 
 const ADVANCE_INDEX_BY_PARAM_COUNTS = {
-  0x41: 11,
-  0x61: 11,
-  0x63: 11,
-  0x43: 11,
-  0x68: 1,
-  0x76: 1,
-  0x48: 1,
-  0x56: 1,
-  0x6C: 3,
-  0x6D: 3,
-  0x74: 3,
-  0x4C: 3,
-  0x4D: 3,
-  0x54: 3,
-  0x71: 7,
-  0x73: 7,
-  0x51: 7,
-  0x53: 7,
-  0x7A: 0,
-  0x5A: 0,
+  0x41: 11,  // A
+  0x61: 11,  // a
+  0x43: 11,  // C
+  0x63: 11,  // c
+  0x48: 1,   // H
+  0x68: 1,   // h
+  0x56: 1,   // V
+  0x76: 1,   // v
+  0x4C: 3,   // L
+  0x6C: 3,   // L
+  0x4D: 3,   // M
+  0x6D: 3,   // m
+  0x54: 3,   // T
+  0x74: 3,   // t
+  0x51: 7,   // Q
+  0x71: 7,   // q
+  0x53: 7,   // S
+  0x73: 7,   // s
+  0x5A: 0,   // Z
+  0x7A: 0,   // z
 };
 
-const isSpace = function (code) {
+const isSpaceOrComma = function (code) {
   switch (code) {
   case 0x20:    // white space
+  case 0x2C:    // comma
   case 0x0A:    // newline
   case 0x09:    // tabulator
   case 0x0D:    // carriage return
@@ -61,11 +60,11 @@ const isSpace = function (code) {
     return true;
   }
   return (
-    (code >= 0x180E) &&
+    (code > 0x180D) &&
     (
       (code === 0x180E) ||  // other special spaces
       (code === 0x2029) ||
-      ((code >= 0x2000) && (code <= 0x200A)) ||
+      (code > 0x1FFF && code < 0x200B) ||
       (code === 0x202F) ||
       (code === 0x205F) ||
       (code === 0x3000) ||
@@ -74,9 +73,8 @@ const isSpace = function (code) {
   );
 };
 
-const skipSpacesAndCommas = function (d, state, end) {
-  let code = d.charCodeAt(state.index);
-  while (state.index < end && (isSpace(code) || code === 0x2C)) {
+const skipSpacesAndCommas = function (d, state, end, code) {
+  while (state.index < end && isSpaceOrComma(code)) {
     state.index++;
     code = d.charCodeAt(state.index);
   }
@@ -93,7 +91,7 @@ const scanSegment = function (d, needParams, abs, start, end, segments) {
 
     for (;;) {
       for (let i = needParams; i > 0; i--) {
-        skipSpacesAndCommas(d, state, end);
+        skipSpacesAndCommas(d, state, end, d.charCodeAt(state.index));
 
         if (i === needParams) {
           _subsegmentStart = _subsegmentStart === undefined ? start : state.index;
@@ -177,7 +175,6 @@ const svgPathParse = function (d) {
 
   let _currStartIndex, code, _previousCode, needParams, _previousNeedParams;
   for (let i = 0; i < d.length; i++) {
-    // console.log(i, d[i])
     code = d.charCodeAt(i);
     needParams = COMMANDS_PARAMS_COUNTS[code];
     if (needParams !== undefined) {
