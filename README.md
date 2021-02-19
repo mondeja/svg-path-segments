@@ -108,7 +108,7 @@ contain next properties:
 |  | svg-path-segments | svgpath |
 |---|---|---|
 | Require | `require("svg-path-segments")` | `require("svgpath/lib/path_parse")` |
-| Benchmark\* | ~50ms | ~75ms |
+| Benchmark\* | ~48ms | ~76ms |
 | Absolutes | YES | NO |
 | Segments indexing | YES | NO |
 | Chained commands | YES | NO |

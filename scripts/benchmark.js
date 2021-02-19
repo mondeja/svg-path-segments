@@ -4,7 +4,7 @@ const pathParse = require('./../src/index');
 const svgPathParse = require('svgpath/lib/path_parse');
 
 const LIBRARIES = {
-  'svg-path-parser': {
+  'svg-path-segments': {
     func: pathParse,
     total: 0
   },

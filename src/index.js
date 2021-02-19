@@ -97,7 +97,8 @@ const scanSegment = function (d, needParams, abs, start, end, segments) {
           _subsegmentStart = _subsegmentStart === undefined ? start : state.index;
         }
         if (isArc && (i === 4 || i === 3)) {
-          params.push(d[state.index] === '0' ? 0 : 1);
+          // bitwise is odd (code === 48 is 0 and code === 49 is 1):
+          params.push(d.charCodeAt(state.index) & 1);
           state.index++;
         } else {
           let _numberAsString = '',
@@ -148,7 +149,7 @@ const scanSegment = function (d, needParams, abs, start, end, segments) {
       }
     }
 
-    if (subSegments.length > 1) {
+    if (subSegments.length >> 1) {  // bitwise 'subSegments.length > 1'
       for (let s = 0; s < subSegments.length; s++) {
         subSegments[s].chained = true;
         subSegments[s].chainStart = start;
