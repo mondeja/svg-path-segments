@@ -1,69 +1,101 @@
 'use strict';
 
-const COMMANDS_PARAMS_COUNTS = {
-  0x61: 7,  // a
-  0x63: 6,  // c
-  0x68: 1,  // h
-  0x6C: 2,  // l
-  0x6D: 2,  // m
-  0x76: 1,  // v
-  0x71: 4,  // q
-  0x73: 4,  // s
-  0x74: 2,  // t
-  0x7A: 0,  // z
-
-  0x41: 7,  // A
-  0x43: 6,  // C
-  0x48: 1,  // H
-  0x4C: 2,  // L
-  0x4D: 2,  // M
-  0x56: 1,  // V
-  0x51: 4,  // Q
-  0x53: 4,  // S
-  0x54: 2,  // T
-  0x5A: 0,  // Z
-};
-
-const ADVANCE_INDEX_BY_PARAM_COUNTS = {
-  0x41: 11,  // A
-  0x61: 11,  // a
-  0x43: 11,  // C
-  0x63: 11,  // c
-  0x48: 1,   // H
-  0x68: 1,   // h
-  0x56: 1,   // V
-  0x76: 1,   // v
-  0x4C: 3,   // L
-  0x6C: 3,   // L
-  0x4D: 3,   // M
-  0x6D: 3,   // m
-  0x54: 3,   // T
-  0x74: 3,   // t
-  0x51: 7,   // Q
-  0x71: 7,   // q
-  0x53: 7,   // S
-  0x73: 7,   // s
-  0x5A: 0,   // Z
-  0x7A: 0,   // z
-};
-
-const isSpaceOrComma = function (code) {
+const paramCountsByCommand = function (code) {
   switch (code) {
-  case 0x20:    // white space
-  case 0x2C:    // comma
-  case 0x0A:    // newline
-  case 0x0B:    // other white spaces
-  case 0xA0:
-  case 0x0C:
-  case 0x09:    // tabulator
-  case 0x0D:    // carriage return
-    return true;
+  case 0x63:  // c
+    return 6;
+  case 0x6C:  // l
+    return 2;
+  case 0x61:  // a
+    return 7;
+  case 0x7A:  // z
+    return 0;
+  case 0x68:  // h
+    return 1;
+  case 0x76:  // v
+    return 1;
+  case 0x6D:  // m
+    return 2;
+  case 0x4D:  // M
+    return 2;
+  case 0x48:  // H
+    return 1;
+  case 0x56:  // V
+    return 1;
+  case 0x4C:  // L
+    return 2;
+  case 0x73:  // s
+    return 4;
+  case 0x43:  // C
+    return 6;
+  case 0x41:  // A
+    return 7;
+  case 0x71:  // q
+    return 4;
+  case 0x5A:  // Z
+    return 0;
+  case 0x53:  // S
+    return 4;
+  case 0x51:  // Q
+    return 4;
+  case 0x74:  // t
+    return 2;
+  case 0x54:  // T
+    return 2;
   }
-  return false;
+  return undefined;
 };
 
-const skipSpacesAndCommas = function (buffer, state, end, code) {
-  while (state.index < end && isSpaceOrComma(code)) {
+const advanceIndexByCommand = function (code) {
+  switch (code) {
+  case 0x63:  // c
+    return 11;
+  case 0x6C:  // l
+    return 3;
+  case 0x61:  // a
+    return 11;
+  case 0x7A:  // z
+    return 0;
+  case 0x68:  // h
+    return 1;
+  case 0x76:  // v
+    return 1;
+  case 0x6D:  // m
+    return 3;
+  case 0x4D:  // M
+    return 3;
+  case 0x48:  // H
+    return 1;
+  case 0x56:  // V
+    return 1;
+  case 0x4C:  // L
+    return 3;
+  case 0x73:  // s
+    return 7;
+  case 0x43:  // C
+    return 11;
+  case 0x41:  // A
+    return 11;
+  case 0x71:  // q
+    return 7;
+  case 0x5A:  // Z
+    return 0;
+  case 0x53:  // S
+    return 7;
+  case 0x51:  // Q
+    return 7;
+  case 0x74:  // t
+    return 3;
+  case 0x54:  // T
+    return 3;
+  }
+  return 0;
+};
+
+
+const skipSpecialChars = function (buffer, state, end, code) {
+  // if the code is lower than '-' character, assume that is a special character
+  while (state.index < end && code < 0b101101) {
     state.index++;
     code = buffer[state.index];
   }
@@ -80,7 +112,7 @@ const scanSegment = function (d, buffer, needParams, abs, start, end, segments) 
 
     for (;;) {
       for (let i = needParams; i > 0; i--) {
-        skipSpacesAndCommas(buffer, state, end, buffer[state.index]);
+        skipSpecialChars(buffer, state, end, buffer[state.index]);
 
         if (i === needParams) {
           _subsegmentStart = _subsegmentStart === undefined ? start : state.index;
@@ -169,21 +201,21 @@ const svgPathParse = function (d) {
 
   while (i < pathLength) {
     code = buffer[i];
-    needParams = COMMANDS_PARAMS_COUNTS[code];
+    needParams = paramCountsByCommand(code);
     if (needParams !== undefined) {
       if (_currStartIndex !== undefined) {
         scanSegment(
           d,
           buffer,
           _previousNeedParams,
-          _previousCode < 0x5B,  // is uppercase
+          _previousCode < 0b1011011,  // is uppercase
           _currStartIndex,
           i - 1,
           segments
         );
       }
       _currStartIndex = i;
-      i += ADVANCE_INDEX_BY_PARAM_COUNTS[code];
+      i += advanceIndexByCommand(code);
       _previousCode = code;
       _previousNeedParams = needParams;
     }
@@ -193,7 +225,7 @@ const svgPathParse = function (d) {
     d,
     buffer,
     _previousNeedParams,
-    _previousCode < 0x5B,
+    _previousCode < 0b1011011,
     _currStartIndex,
     pathLength - 1,
     segments
