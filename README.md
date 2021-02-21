@@ -6,6 +6,8 @@
 
 A fast SVG path parser implementation for Javascript. Does not perform checks
 on input data, but allows to rebuild original path segments from the result.
+To avoid errors, check first that your paths are made up of ASCII characters
+supported by the [SVG 1.1 specification][svg11-spec-link].
 
 [![License][license-image]][license-link]
 
@@ -116,7 +118,7 @@ per segment, which contain next properties:
 |  | svg-path-segments | svgpath |
 |---|---|---|
 | Require | `require("svg-path-segments")` | `require("svgpath/lib/path_parse")` |
-| Benchmark\* | ~48ms | ~76ms |
+| Benchmark\* | ~46ms | ~76ms |
 | Absolutes | YES | NO |
 | Segments indexing | YES | NO |
 | Chained commands | YES | NO |
@@ -130,6 +132,7 @@ per segment, which contain next properties:
 | Check leading zeros in numbers | NO | YES |
 | Check arc flag `0` or `1` | NO | YES |
 | Check invalid float exponents | NO | YES |
+| Unicode support | NO | PARTIAL |
 
 > \* Benchmarks are orientative, if you want to perform your own, run the script
   [scripts/simple-icons-benchmark.js][si-benchmark-link].
@@ -159,3 +162,4 @@ const {segments, SVGPath} = segmentsSVGPath("M5 6 7 8l3 4z");
 [license-image]: https://img.shields.io/npm/l/svg-path-segments?color=brightgreen
 [license-link]: https://github.com/mondeja/svg-path-segments/blob/master/LICENSE
 [si-benchmark-link]: https://github.com/mondeja/svg-path-segments/blob/master/scripts/simple-icons-benchmark.js
+[svg11-spec-link]: https://www.w3.org/TR/SVG11/paths.html

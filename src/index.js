@@ -52,35 +52,24 @@ const isSpaceOrComma = function (code) {
   case 0x20:    // white space
   case 0x2C:    // comma
   case 0x0A:    // newline
+  case 0x0B:    // other white spaces
+  case 0xA0:
+  case 0x0C:
   case 0x09:    // tabulator
   case 0x0D:    // carriage return
-  case 0x0B:    // other white spaces
-  case 0x0C:
-  case 0xA0:
     return true;
   }
-  return (
-    (code > 0x180D) &&
-    (
-      (code === 0x180E) ||  // other special spaces
-      (code === 0x2029) ||
-      (code > 0x1FFF && code < 0x200B) ||
-      (code === 0x202F) ||
-      (code === 0x205F) ||
-      (code === 0x3000) ||
-      (code === 0xFEFF)
-    )
-  );
+  return false;
 };
 
-const skipSpacesAndCommas = function (d, state, end, code) {
+const skipSpacesAndCommas = function (buffer, state, end, code) {
   while (state.index < end && isSpaceOrComma(code)) {
     state.index++;
-    code = d.charCodeAt(state.index);
+    code = buffer[state.index];
   }
 };
 
-const scanSegment = function (d, needParams, abs, start, end, segments) {
+const scanSegment = function (d, buffer, needParams, abs, start, end, segments) {
   let params = [d[start]];
 
   if (needParams) {  // not Zz (not zero parameters)
@@ -91,14 +80,14 @@ const scanSegment = function (d, needParams, abs, start, end, segments) {
 
     for (;;) {
       for (let i = needParams; i > 0; i--) {
-        skipSpacesAndCommas(d, state, end, d.charCodeAt(state.index));
+        skipSpacesAndCommas(buffer, state, end, buffer[state.index]);
 
         if (i === needParams) {
           _subsegmentStart = _subsegmentStart === undefined ? start : state.index;
         }
         if (isArc && (i === 4 || i === 3)) {
           // bitwise is odd (code === 48 is 0 and code === 49 is 1):
-          params.push(d.charCodeAt(state.index) & 1);
+          params.push(buffer[state.index] & 1);
           state.index++;
         } else {
           let _numberAsString = '',
@@ -107,7 +96,7 @@ const scanSegment = function (d, needParams, abs, start, end, segments) {
             _foundExp = false,    // Ee
             code;
           while (state.index <= end) {
-            code = d.charCodeAt(state.index);
+            code = buffer[state.index];
             if (code >= 0x30 && code <= 0x39) {  // 0..9
               _lastNumIndex = state.index;
             } else if (code === 0x2E) {  // .
@@ -172,17 +161,21 @@ const scanSegment = function (d, needParams, abs, start, end, segments) {
 };
 
 const svgPathParse = function (d) {
-  const segments = [], pathLength = d.length;
+  const segments = [],
+    buffer = Buffer.from(d, 'ascii'),
+    pathLength = buffer.length;
   let _currStartIndex, code, _previousCode, needParams, _previousNeedParams,
     i = 0;
 
   while (i < pathLength) {
-    code = d.charCodeAt(i);
+    code = buffer[i];
     needParams = COMMANDS_PARAMS_COUNTS[code];
     if (needParams !== undefined) {
       if (_currStartIndex !== undefined) {
         scanSegment(
-          d, _previousNeedParams,
+          d,
+          buffer,
+          _previousNeedParams,
           _previousCode < 0x5B,  // is uppercase
           _currStartIndex,
           i - 1,
@@ -198,6 +191,7 @@ const svgPathParse = function (d) {
   }
   scanSegment(
     d,
+    buffer,
     _previousNeedParams,
     _previousCode < 0x5B,
     _currStartIndex,

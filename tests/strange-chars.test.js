@@ -42,32 +42,6 @@ const strangeCharacterCases = [
       {start: 0, end: 4, chained: false, params: ['M', 5, 6], abs: true},
     ]
   ],
-
-  // unicode spaces
-  [
-    'M5 6',  // 0x2000
-    [
-      {start: 0, end: 4, chained: false, params: ['M', 5, 6], abs: true},
-    ]
-  ],
-  [
-    'M5 6',  // 0x202F
-    [
-      {start: 0, end: 4, chained: false, params: ['M', 5, 6], abs: true},
-    ]
-  ],
-  [
-    'M5 6',  // 0x205F
-    [
-      {start: 0, end: 4, chained: false, params: ['M', 5, 6], abs: true},
-    ]
-  ],
-  [
-    'M5　6',  // 0x3000
-    [
-      {start: 0, end: 4, chained: false, params: ['M', 5, 6], abs: true},
-    ]
-  ],
 ];
 
 describe('pathParse(d) [Strange character cases]', () => {
