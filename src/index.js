@@ -86,7 +86,7 @@ const scanSegment = function (d, needParams, abs, start, end, segments) {
   if (needParams) {  // not Zz (not zero parameters)
     const state = {index: start + 1},
       subSegments = [],
-      isArc = !(needParams ^ 7);  // bitwise `needParams === 7`
+      isArc = needParams === 7;
     let _subsegmentStart, _lastNumIndex;
 
     for (;;) {
