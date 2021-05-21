@@ -143,14 +143,9 @@ per segment, which contain next properties:
 const svgpath = require("svgpath");
 const parsePath = require("svg-path-segments");
 
-const segmentsSVGPath = (iconPath) => {
-  const segments = parsePath(iconPath);
-  const SVGPath = svgpath("");
-  SVGPath.segments = segments.map(segment => segment.params);
-  return {segments, SVGPath};
-}
-
-const {segments, SVGPath} = segmentsSVGPath("M5 6 7 8l3 4z");
+const segments = parsePath(iconPath);
+const SVGPath = svgpath("");
+SVGPath.segments = segments.map(segment => segment.params);
 ```
 
 [npm-link]: https://www.npmjs.com/package/svg-path-segments
