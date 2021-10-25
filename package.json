@@ -19,7 +19,7 @@
     "parser"
   ],
   "author": "Álvaro Mondéjar Rubio",
-  "license": "GPL-3.0",
+  "license": "BSD-3-Clause",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mondeja/svg-path-segments.git"
