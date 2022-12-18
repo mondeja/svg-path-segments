@@ -150,11 +150,11 @@ SVGPath.segments = segments.map(segment => segment.params);
 
 [npm-link]: https://www.npmjs.com/package/svg-path-segments
 [npm-version-image]: https://img.shields.io/npm/v/svg-path-segments?logo=NPM
-[tests-image]: https://img.shields.io/github/workflow/status/mondeja/svg-path-segments/CI?logo=github
+[tests-image]: https://img.shields.io/github/actions/workflow/status/mondeja/svg-path-segments/ci.yml?branch=master&logo=github&label=tests
 [tests-link]: https://github.com/mondeja/svg-path-segments/actions?query=workflow%3ACI
-[coverage-image]: https://img.shields.io/coveralls/github/mondeja/svg-path-segments?logo=coveralls
+[coverage-image]: https://img.shields.io/coveralls/github/mondeja/svg-path-segments?logo=coverallss&color=brightgreen
 [coverage-link]: https://coveralls.io/github/mondeja/svg-path-segments?branch=master
-[license-image]: https://img.shields.io/npm/l/svg-path-segments?color=brightgreen
+[license-image]: https://img.shields.io/npm/l/svg-path-segments?color=blue
 [license-link]: https://github.com/mondeja/svg-path-segments/blob/master/LICENSE
 [si-benchmark-link]: https://github.com/mondeja/svg-path-segments/blob/master/scripts/simple-icons-benchmark.js
 [svg11-spec-link]: https://www.w3.org/TR/SVG11/paths.html
