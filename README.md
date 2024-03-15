@@ -34,29 +34,29 @@ console.log(JSON.stringify(segments, null, 2));
     "start": 0,
     "end": 4,
     "params": ["M", 5, 6],
-    "chained": true,
-    "chainStart": 0,
-    "chainEnd": 8
+    "chain": {
+      "start": 0,
+      "end": 8
+    },
   },
   {
     "start": 5,
     "end": 8,
     "params": ["M", 7, 8],
-    "chained": true,
-    "chainStart": 0,
-    "chainEnd": 8
+    "chain": {
+      "start": 0,
+      "end": 8
+    },
   },
   {
     "start": 8,
     "end": 12,
     "params": ["l", 3, 4],
-    "chained": false
   },
   {
     "start": 12,
     "end": 13,
     "params": ["z"],
-    "chained": false
   }
 ]
 ```
@@ -69,26 +69,25 @@ svg-path-segments --pretty "M5 6 7 8l3 4z"
 
 ### Reference
 
-<a name="svgPathParse" href="#svgPathParse">#</a> **svgPathParse**(d: _String_)
+<a name="svgPathParse" href="#svgPathParse">#</a> **svgPathParse**(d: _string_)
 ⇒ _Segment[]_
 
 Returns the segments of the SVG path. The result is an array of objects, one
 per segment, which contain next properties:
 
-- **`start`** (_Number_): Index of the first character of the segment.
-- **`end`** (_Number_): Index of the first character after the segment. Note
+- **`start`** (_number_): Index of the first character of the segment.
+- **`end`** (_number_): Index of the first character after the segment. Note
  that you can use `d.substring(result.start, result.end)` to get the raw string
  representation of the segment.
-- **`params`** (_Array<Number>_): Parameters of the segment. The first parameter always
+- **`params`** (_number[]_): Parameters of the segment. The first parameter always
  is the command that draws the segment.
-- **`chained`** (_Boolean_): Indicates that the segment is part of a chained
- set of segments. If this property is `true`, the object will also contain the
- properties `chainStart` and `chainEnd`.
-- **`chainStart`** (optional, _Number_): Index of the first character of the
- chained set of segments to which the segment belongs.
-- **`chainEnd`** (optional, _Number_): Index of the first character after the
- chained set of segments to which the segment belongs. Note that you can use
- `d.substring(result.chainStart, result.chainEnd)` to get the raw string
+- **`chain`** (_object?_): If present, indicates that the segment is part of a
+ chained set of segments.
+  - **`start`** (_number_): Index of the first character of the chained set of
+  segments to which the segment belongs.
+  - **`end`** (_number_): Index of the first character after the chained set of
+  segments to which the segment belongs. Note that you can use
+  `d.substring(result.chain.start, result.chain.end)` to get the raw string
   representation of the chained set of segments to which the segment belongs.
 
 ### Comparison against other implementations
@@ -113,7 +112,7 @@ per segment, which contain next properties:
 | Unicode support | NO | PARTIAL |
 
 > \* Benchmarks are orientative, if you want to perform your own, see
-  [scripts/*simple-icons*-benchmark.js][scripts-link].
+  [scripts/\*-benchmark.js][scripts-link].
 
 ### Usage with [fontello/svgpath](https://github.com/fontello/svgpath)
 

@@ -5,9 +5,10 @@
  *  start: number,
  *  end: number,
  *  params: number[],
- *  chained: boolean,
- *  chainStart?: number,
- *  chainEnd?: number
+ *  chain?: {
+ *    start: number,
+ *    end: number,
+ *  },
  * }} Segment
  */
 
@@ -190,13 +191,13 @@ const scanSegment = function (d, buffer, needParams, start, end, segments) {
 
     if (subSegments.length >> 1) {  // bitwise 'subSegments.length > 1'
       for (let s = 0; s < subSegments.length; s++) {
-        subSegments[s].chained = true;
-        subSegments[s].chainStart = start;
-        subSegments[s].chainEnd = _lastNumIndex + 1;
+        subSegments[s].chain = {
+          start,
+          end: _lastNumIndex + 1
+        };
         segments.push(subSegments[s]);
       }
     } else {
-      subSegments[0].chained = false;
       segments.push(subSegments[0]);
     }
   } else {  // zZ
@@ -204,7 +205,6 @@ const scanSegment = function (d, buffer, needParams, start, end, segments) {
       start,
       end: end + 1,
       params,
-      chained: false,
     });
   }
 };

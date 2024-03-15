@@ -36,7 +36,7 @@ describe('pathParse(d) [Command cases]', () => {
       // https://www.w3.org/TR/SVG/paths.html#PathDataMovetoCommands
       for (let s = 0; s < svgpathParams.length; s++) {
         if (
-          segments[s].chained &&
+          segments[s].chain !== undefined &&
             ['m', 'M'].indexOf(segmentsParams[s][0]) > -1 &&
             ['l', 'L'].indexOf(svgpathParams[s][0]) > -1
         ) {
