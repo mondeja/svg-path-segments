@@ -108,7 +108,7 @@ const advanceIndexByCommand = function (code) {
   case 0x54:  // T
     return 3;
   }
-  throw new Error('Invalid command code ' + code);
+  throw new Error(`Invalid command code ${code}`);
 };
 
 
@@ -218,7 +218,7 @@ const svgPathParse = function (d) {
   const segments = [],
     buffer = Buffer.from(d, 'ascii'),
     pathLength = buffer.length;
-  let _currStartIndex, code, _previousCode, needParams, _previousNeedParams,
+  let _currStartIndex, code, needParams, _previousNeedParams,
     i = 0;
 
   while (i < pathLength) {
@@ -237,7 +237,6 @@ const svgPathParse = function (d) {
       }
       _currStartIndex = i;
       i += advanceIndexByCommand(code);
-      _previousCode = code;
       _previousNeedParams = needParams;
     }
     i++;
