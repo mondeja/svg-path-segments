@@ -33,12 +33,7 @@ console.log(JSON.stringify(segments, null, 2));
   {
     "start": 0,
     "end": 4,
-    "params": [
-      "M",
-      5,
-      6
-    ],
-    "abs": true,
+    "params": ["M", 5, 6],
     "chained": true,
     "chainStart": 0,
     "chainEnd": 8
@@ -46,12 +41,7 @@ console.log(JSON.stringify(segments, null, 2));
   {
     "start": 5,
     "end": 8,
-    "params": [
-      "M",
-      7,
-      8
-    ],
-    "abs": true,
+    "params": ["M", 7, 8],
     "chained": true,
     "chainStart": 0,
     "chainEnd": 8
@@ -59,21 +49,13 @@ console.log(JSON.stringify(segments, null, 2));
   {
     "start": 8,
     "end": 12,
-    "params": [
-      "l",
-      3,
-      4
-    ],
-    "abs": false,
+    "params": ["l", 3, 4],
     "chained": false
   },
   {
     "start": 12,
     "end": 13,
-    "params": [
-      "z"
-    ],
-    "abs": false,
+    "params": ["z"],
     "chained": false
   }
 ]
@@ -87,28 +69,24 @@ svg-path-segments --pretty "M5 6 7 8l3 4z"
 
 ### Reference
 
-<a name="svgPathParse" href="#svgPathParse">#</a> <b>svgPathParse</b>(<i>d</i>)
-⇒ `Array`
-
-- **d** (string) SVG path.
+<a name="svgPathParse" href="#svgPathParse">#</a> **svgPathParse**(d: _String_)
+⇒ _Segment[]_
 
 Returns the segments of the SVG path. The result is an array of objects, one
 per segment, which contain next properties:
 
-- **`start`** (*Integer*): Index of the first character of the segment.
-- **`end`** (*Integer*): Index of the first character after the segment. Note
+- **`start`** (_Number_): Index of the first character of the segment.
+- **`end`** (_Number_): Index of the first character after the segment. Note
  that you can use `d.substring(result.start, result.end)` to get the raw string
  representation of the segment.
-- **`params`** (*Array*): Parameters of the segment. The first parameter always
+- **`params`** (_Array<Number>_): Parameters of the segment. The first parameter always
  is the command that draws the segment.
-- **`abs`** (*Boolean*): Indicates that the coordinates of the segment are
- absolute.
-- **`chained`** (*Boolean*): Indicates that the segment is part of a chained
+- **`chained`** (_Boolean_): Indicates that the segment is part of a chained
  set of segments. If this property is `true`, the object will also contain the
  properties `chainStart` and `chainEnd`.
-- **`chainStart`** (optional, *Integer*): Index of the first character of the
+- **`chainStart`** (optional, _Number_): Index of the first character of the
  chained set of segments to which the segment belongs.
-- **`chainEnd`** (optional, *Integer*): Index of the first character after the
+- **`chainEnd`** (optional, _Number_): Index of the first character after the
  chained set of segments to which the segment belongs. Note that you can use
  `d.substring(result.chainStart, result.chainEnd)` to get the raw string
   representation of the chained set of segments to which the segment belongs.
@@ -134,8 +112,8 @@ per segment, which contain next properties:
 | Check invalid float exponents | NO | YES |
 | Unicode support | NO | PARTIAL |
 
-> \* Benchmarks are orientative, if you want to perform your own, run the script
-  [scripts/simple-icons-benchmark.js][si-benchmark-link].
+> \* Benchmarks are orientative, if you want to perform your own, see
+  [scripts/*simple-icons*-benchmark.js][scripts-link].
 
 ### Usage with [fontello/svgpath](https://github.com/fontello/svgpath)
 
@@ -156,5 +134,5 @@ SVGPath.segments = segments.map(segment => segment.params);
 [coverage-link]: https://coveralls.io/github/mondeja/svg-path-segments?branch=master
 [license-image]: https://img.shields.io/npm/l/svg-path-segments?color=blue
 [license-link]: https://github.com/mondeja/svg-path-segments/blob/master/LICENSE
-[si-benchmark-link]: https://github.com/mondeja/svg-path-segments/blob/master/scripts/simple-icons-benchmark.js
+[scripts-link]: https://github.com/mondeja/svg-path-segments/tree/master/scripts
 [svg11-spec-link]: https://www.w3.org/TR/SVG11/paths.html

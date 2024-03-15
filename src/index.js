@@ -1,5 +1,20 @@
 'use strict';
 
+/**
+ * @typedef {{
+ *  start: number,
+ *  end: number,
+ *  params: number[],
+ *  chained: boolean,
+ *  chainStart?: number,
+ *  chainEnd?: number
+ * }} Segment
+ */
+
+/**
+ * @param {Number} code
+ * @returns {Number|undefined}
+ */
 const paramCountsByCommand = function (code) {
   switch (code) {
   case 0x63:  // c
@@ -46,6 +61,10 @@ const paramCountsByCommand = function (code) {
   return undefined;
 };
 
+/**
+ * @param {Number} code
+ * @returns {Number}
+ */
 const advanceIndexByCommand = function (code) {
   switch (code) {
   case 0x63:  // c
@@ -89,7 +108,7 @@ const advanceIndexByCommand = function (code) {
   case 0x54:  // T
     return 3;
   }
-  return 0;
+  throw new Error('Invalid command code ' + code);
 };
 
 
@@ -101,7 +120,7 @@ const skipSpecialChars = function (buffer, state, end, code) {
   }
 };
 
-const scanSegment = function (d, buffer, needParams, abs, start, end, segments) {
+const scanSegment = function (d, buffer, needParams, start, end, segments) {
   let params = [d[start]];
 
   if (needParams) {  // not Zz (not zero parameters)
@@ -161,7 +180,6 @@ const scanSegment = function (d, buffer, needParams, abs, start, end, segments) 
         start: _subsegmentStart,
         end: _lastNumIndex + 1,
         params,
-        abs,
       });
       params = [d[start]];
 
@@ -186,12 +204,16 @@ const scanSegment = function (d, buffer, needParams, abs, start, end, segments) 
       start,
       end: end + 1,
       params,
-      abs,
       chained: false,
     });
   }
 };
 
+/**
+ * Extract segments from SVG path data.
+ * @param {String} d Path data
+ * @returns {Segment[]}
+ */
 const svgPathParse = function (d) {
   const segments = [],
     buffer = Buffer.from(d, 'ascii'),
@@ -208,7 +230,6 @@ const svgPathParse = function (d) {
           d,
           buffer,
           _previousNeedParams,
-          _previousCode < 0b1011011,  // is uppercase
           _currStartIndex,
           i - 1,
           segments
@@ -225,7 +246,6 @@ const svgPathParse = function (d) {
     d,
     buffer,
     _previousNeedParams,
-    _previousCode < 0b1011011,
     _currStartIndex,
     pathLength - 1,
     segments
