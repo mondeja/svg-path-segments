@@ -7,13 +7,13 @@ const commandCases = [
   [
     'M5 3',
     [
-      {start: 0, end: 4, chained: false, params: ['M', 5, 3], abs: true},
+      {start: 0, end: 4, params: ['M', 5, 3]},
     ]
   ],
   [
     'm5 3',
     [
-      {start: 0, end: 4, chained: false, params: ['m', 5, 3], abs: false},
+      {start: 0, end: 4, params: ['m', 5, 3]},
     ]
   ],
 
@@ -21,13 +21,13 @@ const commandCases = [
   [
     'L5 3',
     [
-      {start: 0, end: 4, chained: false, params: ['L', 5, 3], abs: true},
+      {start: 0, end: 4, params: ['L', 5, 3]},
     ]
   ],
   [
     'l5 3',
     [
-      {start: 0, end: 4, chained: false, params: ['l', 5, 3], abs: false},
+      {start: 0, end: 4, params: ['l', 5, 3]},
     ]
   ],
 
@@ -35,13 +35,13 @@ const commandCases = [
   [
     'H5',
     [
-      {start: 0, end: 2, chained: false, params: ['H', 5], abs: true},
+      {start: 0, end: 2, params: ['H', 5]},
     ]
   ],
   [
     'h5',
     [
-      {start: 0, end: 2, chained: false, params: ['h', 5], abs: false},
+      {start: 0, end: 2, params: ['h', 5]},
     ]
   ],
 
@@ -49,13 +49,13 @@ const commandCases = [
   [
     'V5',
     [
-      {start: 0, end: 2, chained: false, params: ['V', 5], abs: true},
+      {start: 0, end: 2, params: ['V', 5]},
     ]
   ],
   [
     'v5',
     [
-      {start: 0, end: 2, chained: false, params: ['v', 5], abs: false},
+      {start: 0, end: 2, params: ['v', 5]},
     ]
   ],
 
@@ -63,13 +63,13 @@ const commandCases = [
   [
     'Z',
     [
-      {start: 0, end: 1, chained: false, params: ['Z'], abs: true},
+      {start: 0, end: 1, params: ['Z']},
     ]
   ],
   [
     'z',
     [
-      {start: 0, end: 1, chained: false, params: ['z'], abs: false},
+      {start: 0, end: 1, params: ['z']},
     ]
   ],
 
@@ -79,7 +79,6 @@ const commandCases = [
     [
       {
         start: 0, end: 30, params: ['C', -.805, .062, -1.434, .77, -1.434, 1.61],
-        chained: false, abs: true,
       }
     ]
   ],
@@ -88,7 +87,6 @@ const commandCases = [
     [
       {
         start: 0, end: 32, params: ['c', -.805, .062, -.429, -.893, -1.034, -1.284],
-        chained: false, abs: false,
       }
     ]
   ],
@@ -97,14 +95,14 @@ const commandCases = [
   [
     'T.11-.33',
     [
-      {start: 0, end: 8, chained: false, params: ['T', .11, -.33], abs: true}
+      {start: 0, end: 8, params: ['T', .11, -.33]}
     ]
   ],
   [
     't.11-.33',
     [
       {
-        start: 0, end: 8, chained: false, params: ['t', .11, -.33], abs: false}
+        start: 0, end: 8, params: ['t', .11, -.33]}
     ]
   ],
 
@@ -114,7 +112,6 @@ const commandCases = [
     [
       {
         start: 0, end: 19, params: ['A', .72, .72, 0, 0, 0, 23.28, 0],
-        chained: false, abs: true,
       }
     ]
   ],
@@ -123,7 +120,6 @@ const commandCases = [
     [
       {
         start: 0, end: 20, params: ['a', .72, .72, 90, 1, 0, 23.28, 0],
-        chained: false, abs: false,
       }
     ]
   ],
@@ -133,8 +129,8 @@ const commandCases = [
     'S.036 18.858 0 17.347',
     [
       {
-        start: 0, end: 21, abs: true,
-        chained: false, params: ['S', .036, 18.858, 0, 17.347]
+        start: 0, end: 21,
+        params: ['S', .036, 18.858, 0, 17.347]
       }
     ]
   ],
@@ -142,8 +138,8 @@ const commandCases = [
     's.036 18.858 0 17.347',
     [
       {
-        start: 0, end: 21, abs: false,
-        chained: false, params: ['s', .036, 18.858, 0, 17.347]
+        start: 0, end: 21,
+        params: ['s', .036, 18.858, 0, 17.347]
       }
     ]
   ],
@@ -153,8 +149,7 @@ const commandCases = [
     'Q.14 0 .25.12',
     [
       {
-        start: 0, end: 13, abs: true, params: ['Q', .14, 0, .25, .12],
-        chained: false,
+        start: 0, end: 13, params: ['Q', .14, 0, .25, .12],
       }
     ]
   ],
@@ -162,8 +157,8 @@ const commandCases = [
     'q.14 0 .25.12',
     [
       {
-        start: 0, end: 13, abs: false,
-        chained: false, params: ['q', .14, 0, .25, .12]
+        start: 0, end: 13,
+        params: ['q', .14, 0, .25, .12]
       }
     ]
   ],

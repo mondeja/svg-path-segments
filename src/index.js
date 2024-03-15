@@ -1,5 +1,21 @@
 'use strict';
 
+/**
+ * @typedef {{
+ *  start: number,
+ *  end: number,
+ *  params: number[],
+ *  chain?: {
+ *    start: number,
+ *    end: number,
+ *  },
+ * }} Segment
+ */
+
+/**
+ * @param {Number} code
+ * @returns {Number|undefined}
+ */
 const paramCountsByCommand = function (code) {
   switch (code) {
   case 0x63:  // c
@@ -46,6 +62,10 @@ const paramCountsByCommand = function (code) {
   return undefined;
 };
 
+/**
+ * @param {Number} code
+ * @returns {Number}
+ */
 const advanceIndexByCommand = function (code) {
   switch (code) {
   case 0x63:  // c
@@ -89,7 +109,7 @@ const advanceIndexByCommand = function (code) {
   case 0x54:  // T
     return 3;
   }
-  return 0;
+  throw new Error(`Invalid command code ${code}`);
 };
 
 
@@ -101,7 +121,7 @@ const skipSpecialChars = function (buffer, state, end, code) {
   }
 };
 
-const scanSegment = function (d, buffer, needParams, abs, start, end, segments) {
+const scanSegment = function (d, buffer, needParams, start, end, segments) {
   let params = [d[start]];
 
   if (needParams) {  // not Zz (not zero parameters)
@@ -161,7 +181,6 @@ const scanSegment = function (d, buffer, needParams, abs, start, end, segments) 
         start: _subsegmentStart,
         end: _lastNumIndex + 1,
         params,
-        abs,
       });
       params = [d[start]];
 
@@ -172,13 +191,13 @@ const scanSegment = function (d, buffer, needParams, abs, start, end, segments) 
 
     if (subSegments.length >> 1) {  // bitwise 'subSegments.length > 1'
       for (let s = 0; s < subSegments.length; s++) {
-        subSegments[s].chained = true;
-        subSegments[s].chainStart = start;
-        subSegments[s].chainEnd = _lastNumIndex + 1;
+        subSegments[s].chain = {
+          start,
+          end: _lastNumIndex + 1
+        };
         segments.push(subSegments[s]);
       }
     } else {
-      subSegments[0].chained = false;
       segments.push(subSegments[0]);
     }
   } else {  // zZ
@@ -186,17 +205,20 @@ const scanSegment = function (d, buffer, needParams, abs, start, end, segments) 
       start,
       end: end + 1,
       params,
-      abs,
-      chained: false,
     });
   }
 };
 
+/**
+ * Extract segments from SVG path data.
+ * @param {String} d Path data
+ * @returns {Segment[]}
+ */
 const svgPathParse = function (d) {
   const segments = [],
     buffer = Buffer.from(d, 'ascii'),
     pathLength = buffer.length;
-  let _currStartIndex, code, _previousCode, needParams, _previousNeedParams,
+  let _currStartIndex, code, needParams, _previousNeedParams,
     i = 0;
 
   while (i < pathLength) {
@@ -208,7 +230,6 @@ const svgPathParse = function (d) {
           d,
           buffer,
           _previousNeedParams,
-          _previousCode < 0b1011011,  // is uppercase
           _currStartIndex,
           i - 1,
           segments
@@ -216,7 +237,6 @@ const svgPathParse = function (d) {
       }
       _currStartIndex = i;
       i += advanceIndexByCommand(code);
-      _previousCode = code;
       _previousNeedParams = needParams;
     }
     i++;
@@ -225,7 +245,6 @@ const svgPathParse = function (d) {
     d,
     buffer,
     _previousNeedParams,
-    _previousCode < 0b1011011,
     _currStartIndex,
     pathLength - 1,
     segments
