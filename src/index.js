@@ -4,7 +4,7 @@
  * @typedef {{
  *  start: number,
  *  end: number,
- *  params: number[],
+ *  params: [string, ...number[]],
  *  chain?: {
  *    start: number,
  *    end: number,
@@ -13,8 +13,8 @@
  */
 
 /**
- * @param {Number} code
- * @returns {Number|undefined}
+ * @param {number} code
+ * @returns {number|undefined}
  */
 const paramCountsByCommand = function (code) {
   switch (code) {
@@ -63,8 +63,8 @@ const paramCountsByCommand = function (code) {
 };
 
 /**
- * @param {Number} code
- * @returns {Number}
+ * @param {number} code
+ * @returns {number}
  */
 const advanceIndexByCommand = function (code) {
   switch (code) {
@@ -112,7 +112,13 @@ const advanceIndexByCommand = function (code) {
   throw new Error(`Invalid command code ${code}`);
 };
 
-
+/**
+ * Skip special characters in the buffer.
+ * @param {Buffer} buffer Path data buffer
+ * @param {{index: number}} state State object with the current index
+ * @param {number} end End index of the segment
+ * @param {number} code Current code
+ */
 const skipSpecialChars = function (buffer, state, end, code) {
   // if the code is lower than '-' character, assume that is a special character
   while (state.index < end && code < 0b101101) {
@@ -121,14 +127,26 @@ const skipSpecialChars = function (buffer, state, end, code) {
   }
 };
 
+/**
+ * Scan a segment of SVG path data.
+ * @param {string} d Path data
+ * @param {Buffer} buffer Path data buffer
+ * @param {number} needParams Number of parameters needed for the command
+ * @param {number} start Start index of the segment
+ * @param {number} end End index of the segment
+ * @param {Segment[]} segments Array to store the segments
+ */
 const scanSegment = function (d, buffer, needParams, start, end, segments) {
+  /** @type [string, ...number[]] */
   let params = [d[start]];
 
   if (needParams) {  // not Zz (not zero parameters)
     const state = {index: start + 1},
+      /** @type {Segment[]} */
       subSegments = [],
       isArc = needParams === 7;
-    let _subsegmentStart, _lastNumIndex;
+    let _subsegmentStart;
+    let _lastNumIndex;
 
     for (;;) {
       for (let i = needParams; i > 0; i--) {
@@ -178,7 +196,9 @@ const scanSegment = function (d, buffer, needParams, start, end, segments) {
       }
 
       subSegments.push({
+        // @ts-ignore
         start: _subsegmentStart,
+        // @ts-ignore
         end: _lastNumIndex + 1,
         params,
       });
@@ -193,6 +213,7 @@ const scanSegment = function (d, buffer, needParams, start, end, segments) {
       for (let s = 0; s < subSegments.length; s++) {
         subSegments[s].chain = {
           start,
+          // @ts-ignore
           end: _lastNumIndex + 1
         };
         segments.push(subSegments[s]);
@@ -211,14 +232,15 @@ const scanSegment = function (d, buffer, needParams, start, end, segments) {
 
 /**
  * Extract segments from SVG path data.
- * @param {String} d Path data
- * @returns {Segment[]}
+ * @param {string} d Path data
+ * @returns {Segment[]} Parsed segments
  */
 const svgPathParse = function (d) {
+  /** @type {Segment[]} */
   const segments = [],
     buffer = Buffer.from(d, 'ascii'),
     pathLength = buffer.length;
-  let _currStartIndex, code, needParams, _previousNeedParams,
+  let _currStartIndex, code, needParams, _previousNeedParams = 0,
     i = 0;
 
   while (i < pathLength) {
