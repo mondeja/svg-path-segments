@@ -145,8 +145,8 @@ const scanSegment = function (d, buffer, needParams, start, end, segments) {
       /** @type {Segment[]} */
       subSegments = [],
       isArc = needParams === 7;
-    let _subsegmentStart = 0;
-    let _lastNumIndex = 0;
+    let _subsegmentStart;
+    let _lastNumIndex;
 
     for (;;) {
       for (let i = needParams; i > 0; i--) {
@@ -196,7 +196,9 @@ const scanSegment = function (d, buffer, needParams, start, end, segments) {
       }
 
       subSegments.push({
+        // @ts-ignore
         start: _subsegmentStart,
+        // @ts-ignore
         end: _lastNumIndex + 1,
         params,
       });
@@ -211,6 +213,7 @@ const scanSegment = function (d, buffer, needParams, start, end, segments) {
       for (let s = 0; s < subSegments.length; s++) {
         subSegments[s].chain = {
           start,
+          // @ts-ignore
           end: _lastNumIndex + 1
         };
         segments.push(subSegments[s]);
