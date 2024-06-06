@@ -240,7 +240,7 @@ const svgPathParse = function (d) {
   const segments = [],
     buffer = Buffer.from(d, 'ascii'),
     pathLength = buffer.length;
-  let _currStartIndex = 0, code, needParams, _previousNeedParams = 0,
+  let _currStartIndex, code, needParams, _previousNeedParams = 0,
     i = 0;
 
   while (i < pathLength) {
