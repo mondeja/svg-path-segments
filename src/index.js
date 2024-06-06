@@ -14,7 +14,7 @@
 
 /**
  * @param {number} code
- * @returns {Number|undefined}
+ * @returns {number|undefined}
  */
 const paramCountsByCommand = function (code) {
   switch (code) {
@@ -64,7 +64,7 @@ const paramCountsByCommand = function (code) {
 
 /**
  * @param {number} code
- * @returns {Number}
+ * @returns {number}
  */
 const advanceIndexByCommand = function (code) {
   switch (code) {
@@ -116,8 +116,8 @@ const advanceIndexByCommand = function (code) {
  * Skip special characters in the buffer.
  * @param {Buffer} buffer Path data buffer
  * @param {{index: number}} state State object with the current index
- * @param {Number} end End index of the segment
- * @param {Number} code Current code
+ * @param {number} end End index of the segment
+ * @param {number} code Current code
  */
 const skipSpecialChars = function (buffer, state, end, code) {
   // if the code is lower than '-' character, assume that is a special character
@@ -131,9 +131,9 @@ const skipSpecialChars = function (buffer, state, end, code) {
  * Scan a segment of SVG path data.
  * @param {string} d Path data
  * @param {Buffer} buffer Path data buffer
- * @param {Number} needParams Number of parameters needed for the command
- * @param {Number} start Start index of the segment
- * @param {Number} end End index of the segment
+ * @param {number} needParams Number of parameters needed for the command
+ * @param {number} start Start index of the segment
+ * @param {number} end End index of the segment
  * @param {Segment[]} segments Array to store the segments
  */
 const scanSegment = function (d, buffer, needParams, start, end, segments) {
